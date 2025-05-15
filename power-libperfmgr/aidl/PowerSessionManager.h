@@ -133,7 +133,10 @@ class PowerSessionManager : public Immobile {
         : mPriorityQueueWorkerPool(new PriorityQueueWorkerPool(1, "adpf_handler")),
           mEventSessionTimeoutWorker([&](auto e) { handleEvent(e); }, mPriorityQueueWorkerPool),
           mGpuCapacityNode(createGpuCapacityNode()),
-          mTaskRampupMultNode(TaskRampupMultNode::getInstance()) {}
+          mTaskRampupMultNode(TaskRampupMultNode::getInstance()),
+          kMaxNumOfCachedSessionMetrics(HintManagerT::GetInstance()
+                                                ->GetOtherConfigs()
+                                                .maxNumOfCachedSessionMetrics.value_or(100)) {}
     PowerSessionManager(PowerSessionManager const &) = delete;
     PowerSessionManager &operator=(PowerSessionManager const &) = delete;
 
@@ -144,6 +147,8 @@ class PowerSessionManager : public Immobile {
 
     std::atomic<bool> mGameModeEnabled{false};
     std::shared_ptr<TaskRampupMultNode> mTaskRampupMultNode;
+
+    const int32_t kMaxNumOfCachedSessionMetrics;
 };
 
 }  // namespace pixel
