@@ -202,6 +202,10 @@ void SessionRecords::updateFrameBuckets(int32_t frameDurationUs, bool isJankFram
     }
 }
 
+bool SessionRecords::areAllRecordsInitialized() const {
+    return mNumOfFrames >= kMaxNumOfRecords;
+}
+
 }  // namespace pixel
 }  // namespace impl
 }  // namespace power
