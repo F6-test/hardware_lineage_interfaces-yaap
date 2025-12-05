@@ -17,4 +17,5 @@ hidl_interface {
         "android.hidl.base@1.0",
     ],
     gen_java: true,
+    use_generic_config: true,
 }
