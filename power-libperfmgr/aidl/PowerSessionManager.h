@@ -124,7 +124,7 @@ class PowerSessionManager : public Immobile {
     void applyCpuAndGpuVotes(int64_t sessionId, std::chrono::steady_clock::time_point timePoint);
     // Force a session active or in-active, helper for other methods
     void forceSessionActive(int64_t sessionId, bool isActive);
-    std::string getSessionTaskProfile(int64_t sessionId, bool isSetProfile) const;
+    std::vector<std::string> getSessionTaskProfiles(int64_t sessionId, bool isSetProfile) const;
     void voteRampupBoostLocked(int64_t sessionId, bool rampupBoostVote, int32_t defaultRampupVal,
                                int32_t highRampupVal);
 
@@ -133,7 +133,10 @@ class PowerSessionManager : public Immobile {
         : mPriorityQueueWorkerPool(new PriorityQueueWorkerPool(1, "adpf_handler")),
           mEventSessionTimeoutWorker([&](auto e) { handleEvent(e); }, mPriorityQueueWorkerPool),
           mGpuCapacityNode(createGpuCapacityNode()),
-          mTaskRampupMultNode(TaskRampupMultNode::getInstance()) {}
+          mTaskRampupMultNode(TaskRampupMultNode::getInstance()),
+          kMaxNumOfCachedSessionMetrics(HintManagerT::GetInstance()
+                                                ->GetOtherConfigs()
+                                                .maxNumOfCachedSessionMetrics.value_or(100)) {}
     PowerSessionManager(PowerSessionManager const &) = delete;
     PowerSessionManager &operator=(PowerSessionManager const &) = delete;
 
@@ -144,6 +147,8 @@ class PowerSessionManager : public Immobile {
 
     std::atomic<bool> mGameModeEnabled{false};
     std::shared_ptr<TaskRampupMultNode> mTaskRampupMultNode;
+
+    const int32_t kMaxNumOfCachedSessionMetrics;
 };
 
 }  // namespace pixel
